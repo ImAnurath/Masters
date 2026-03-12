@@ -10,14 +10,13 @@ from sahi.slicing import slice_image
 DATA_DIR        = "Masters/data"          # folder with images/ and labels/ subdirs
 OUTPUT_DIR      = "Masters/data_sliced"   # will be created automatically
 SLICE_SIZE      = 640               # slice width and height in pixels
-OVERLAP_RATIO   = 0.3               # 30% overlap between slices
+OVERLAP_RATIO   = 0.3               # % overlap between slices
 MIN_VISIBILITY  = 0.1               # keep a bbox in a slice if at least this
                                     # fraction of its area survives clipping
 # ─────────────────────────────────────────────
 
 
-def yolo_to_abs(cx, cy, w, h, img_w, img_h):
-    """Convert YOLO normalised bbox → absolute xyxy."""
+def yolo_to_abs(cx, cy, w, h, img_w, img_h): # yolo bboxes to unnormalised absolute values
     x1 = (cx - w / 2) * img_w
     y1 = (cy - h / 2) * img_h
     x2 = (cx + w / 2) * img_w
@@ -25,8 +24,7 @@ def yolo_to_abs(cx, cy, w, h, img_w, img_h):
     return x1, y1, x2, y2
 
 
-def abs_to_yolo(x1, y1, x2, y2, tile_w, tile_h):
-    """Convert absolute xyxy (relative to tile origin) → YOLO normalised."""
+def abs_to_yolo(x1, y1, x2, y2, tile_w, tile_h): # unnormalised absolute values to yolo
     cx = (x1 + x2) / 2 / tile_w
     cy = (y1 + y2) / 2 / tile_h
     w  = (x2 - x1) / tile_w
@@ -116,11 +114,11 @@ def process_dataset():
             print(f"  [SKIP]  {img_path.name}  (no labels)")
             continue
 
-        # ── Open image ────────────────────────────────────────────────────
+        # Open image
         image    = Image.open(img_path).convert("RGB")
         img_w, img_h = image.size
 
-        # ── Slice with SAHI ───────────────────────────────────────────────
+        # Slice with SAHI
         slice_result = slice_image(
             image            = str(img_path),
             slice_height     = SLICE_SIZE,
@@ -133,6 +131,7 @@ def process_dataset():
 
         for idx, sliced_img in enumerate(slice_result.sliced_image_list):
             # SAHI may return numpy array or PIL Image depending on version
+            # mine returns numpy
             raw      = sliced_img.image
             tile_pil = Image.fromarray(raw) if not isinstance(raw, Image.Image) else raw
             sx       = sliced_img.starting_pixel[0]   # top-left x in original
@@ -155,6 +154,7 @@ def process_dataset():
                 tile_labels.append((cls, ncx, ncy, nw, nh))
 
             # Only save tiles that actually contain at least one bbox
+            # if it is background without label I am not saving it since its already way too fucking big
             if not tile_labels:
                 continue
 
@@ -172,6 +172,7 @@ def process_dataset():
             total_tiles  += 1
 
         sliced += 1
+        # keeping track of things
         print(f"  [DONE]  {img_path.name}  →  {tiles_saved} tiles saved")
 
     print(f"\n{'─'*50}")
