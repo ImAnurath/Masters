@@ -1,0 +1,16 @@
+# Optimizer
+optimizer: SGD
+lr0: 0.01                 # Initial learning rate
+lrf: 0.01                 # Final learning rate (lr0 * lrf)
+momentum: 0.937           # SGD momentum
+weight_decay: 0.0005      # L2 regularization
+
+# Training schedule
+warmup_epochs: 3.0        # Warmup epochs
+warmup_momentum: 0.8      # Warmup initial momentum
+warmup_bias_lr: 0.1       # Warmup initial bias lr
+
+# Loss weights
+box: 7.5                  # Box loss gain
+cls: 0.5                  # Class loss gain
+dfl: 1.5                  # DFL loss gain

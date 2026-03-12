@@ -1,0 +1,18 @@
+# Geometric
+degrees: 10.0             # ±10° rotation - camera angle variations
+translate: 0.15           # 15% translation
+scale: 0.3                # ±30% zoom variation
+shear: 2.0                # Slight shearing (camera not perfectly perpendicular)
+perspective: 0.0002       # Very subtle perspective (0.0001-0.001 range)
+flipud: 0.0               # NO vertical flip
+fliplr: 0.5               # 50% horizontal flip
+
+# Color/Lighting (simulating various weather/times)
+hsv_h: 0.015              # ±1.5% hue (different lighting conditions)
+hsv_s: 0.5                # ±50% saturation (cloudy vs sunny)
+hsv_v: 0.3                # ±30% brightness (dawn to dusk)
+
+# Advanced
+mosaic: 0.5               # % mosaic - can help with small object detection
+mixup: 0.0                # %mixup for regularization
+copy_paste: 0.35          # copy-paste (duplicate bees)

@@ -1,0 +1,24 @@
+
+# Geometric
+degrees: 5.0              # Small rotation (±5°) - hive rarely perfectly level
+translate: 0.1            # 10% translation - camera position varies slightly
+scale: 0.2                # ±20% zoom - different camera distances
+shear: 0.0                # No shearing
+perspective: 0.0          # No perspective distortion
+flipud: 0.0               # NO vertical flip (hive would be upside down)
+fliplr: 0.3               # 30% horizontal flip (left/right doesn't matter)
+
+# Color/Lighting (simulating different times of day)
+hsv_h: 0.01               # Slight hue shift (0-1 scale, so ±1%)
+hsv_s: 0.3                # ±30% saturation (shadows/sun)
+hsv_v: 0.2                # ±20% brightness (morning/evening)
+
+# Advanced
+mosaic: 0.0   # No mosaic (not suitable for detection near entrance)
+mixup: 0.0  # No mixup
+copy_paste: 0.0 # No copy-paste
+erasing: 0.0
+auto_augment: null
+
+# Early stopping for mosaic (not used since mosaic=0, but good to have)
+close_mosaic: 10

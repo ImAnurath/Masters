@@ -1,0 +1,16 @@
+# Optimizer
+optimizer: AdamW
+lr0: 0.0001               # Very low LR for fine-tuning
+lrf: 0.01
+momentum: 0.9
+weight_decay: 0.01        # Lower weight decay
+
+# Training schedule
+warmup_epochs: 2.0        # Short warmup
+warmup_momentum: 0.8
+warmup_bias_lr: 0.00001
+
+# Loss weights
+box: 7.5
+cls: 0.5
+dfl: 1.5

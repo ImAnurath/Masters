@@ -1,0 +1,16 @@
+# Optimizer
+optimizer: AdamW
+lr0: 0.001                # AdamW typically needs lower LR
+lrf: 0.01                 # Decay to 1% of initial
+momentum: 0.9             # Beta1 for AdamW
+weight_decay: 0.05        # AdamW can handle higher weight decay
+
+# Training schedule
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.0001
+
+# Loss weights
+box: 7.5
+cls: 0.5
+dfl: 1.5

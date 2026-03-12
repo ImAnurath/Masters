@@ -1,0 +1,23 @@
+# Geometric
+degrees: 15.0             # ±15° rotation - more extreme camera angles
+translate: 0.2            # 20% translation
+scale: 0.5                # ±50% zoom (from very close to far away)
+shear: 5.0                # More shearing (various camera angles)
+perspective: 0.0005       # Moderate perspective distortion
+flipud: 0.0               # NO vertical flip
+fliplr: 0.5               # 50% horizontal flip
+
+# Color/Lighting (extreme conditions simulation)
+hsv_h: 0.02               # ±2% hue shift
+hsv_s: 0.7                # ±70% saturation (very sunny vs overcast)
+hsv_v: 0.4                # ±40% brightness (early morning to bright noon)
+
+# Image quality
+blur: 0.02                # Light blur (motion/focus issues)
+noise: 0.02               # Light noise (various cameras/conditions)
+
+# Advanced
+mosaic: 0.7               # 70% mosaic
+mixup: 0.15               # 15% mixup
+copy_paste: 0.2           # 20% copy-paste
+erasing: 0.2              # 20% random erasing (simulate occlusions)

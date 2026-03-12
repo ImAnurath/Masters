@@ -1,0 +1,16 @@
+# Optimizer
+optimizer: AdamW
+lr0: 0.0008
+lrf: 0.1
+momentum: 0.9
+weight_decay: 0.005
+
+# Training schedule
+warmup_epochs: 2.0
+warmup_momentum: 0.85
+warmup_bias_lr: 0.00008
+
+# Loss weights
+box: 12.0
+cls: 0.3
+dfl: 2.5
