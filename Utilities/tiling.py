@@ -15,14 +15,13 @@ MIN_VISIBILITY  = 0.1               # keep a bbox in a slice if at least this
                                     # fraction of its area survives clipping
 # ─────────────────────────────────────────────
 
-
+# helper functions for bbox format conversions and clipping since SAHI gives us the tile coordinates and we need to convert bboxes to tile-local and back to YOLO format for saving
 def yolo_to_abs(cx, cy, w, h, img_w, img_h): # yolo bboxes to unnormalised absolute values
     x1 = (cx - w / 2) * img_w
     y1 = (cy - h / 2) * img_h
     x2 = (cx + w / 2) * img_w
     y2 = (cy + h / 2) * img_h
     return x1, y1, x2, y2
-
 
 def abs_to_yolo(x1, y1, x2, y2, tile_w, tile_h): # unnormalised absolute values to yolo
     cx = (x1 + x2) / 2 / tile_w
@@ -31,12 +30,7 @@ def abs_to_yolo(x1, y1, x2, y2, tile_w, tile_h): # unnormalised absolute values 
     h  = (y2 - y1) / tile_h
     return cx, cy, w, h
 
-
 def clip_bbox_to_tile(x1, y1, x2, y2, tx, ty, tw, th):
-    """
-    Clip a bbox (absolute image coords) to a tile region.
-    Returns clipped bbox in tile-local coordinates, or None if no overlap.
-    """
     # Intersect with tile
     ix1 = max(x1, tx)
     iy1 = max(y1, ty)
@@ -55,9 +49,8 @@ def clip_bbox_to_tile(x1, y1, x2, y2, tx, ty, tw, th):
     # Shift to tile-local coordinates
     return ix1 - tx, iy1 - ty, ix2 - tx, iy2 - ty
 
-
 def load_labels(label_path):
-    """Return list of (class_id, cx, cy, w, h) tuples, or empty list."""
+    # returns list of (class_id, cx, cy, w, h) tuples from a YOLO label file, or empty list if file doesn't exist or is empty/invalid
     annotations = []
     if not label_path.exists():
         return annotations
@@ -79,18 +72,18 @@ def process_dataset():
     data_path   = Path(DATA_DIR)
     images_path = data_path / "images"
     labels_path = data_path / "labels"
-
+    # create output folders
     out_path        = Path(OUTPUT_DIR)
     out_images_path = out_path / "images"
     out_labels_path = out_path / "labels"
     out_images_path.mkdir(parents=True, exist_ok=True)
     out_labels_path.mkdir(parents=True, exist_ok=True)
-
+    # gather image files
     image_files = sorted(
         p for p in images_path.iterdir()
         if p.suffix.lower() in {".jpg", ".jpeg", ".png", ".bmp", ".tiff"}
     )
-
+    # stats because why not
     total       = len(image_files)
     sliced      = 0
     skipped     = 0
@@ -105,20 +98,21 @@ def process_dataset():
     print(f"  Images   : {total}")
     print(f"{'─'*50}\n")
 
-    for img_path in image_files:
+    for img_path in image_files:  # loop over images to find corresponding labels and slice
         label_path  = labels_path / (img_path.stem + ".txt")
         annotations = load_labels(label_path)
 
-        if not annotations:
+        if not annotations: 
+            # if no labels, skip slicing since we are not saving background tiles and it would be a waste of time and disk space to slice them just to throw them away
             skipped += 1
             print(f"  [SKIP]  {img_path.name}  (no labels)")
             continue
 
-        # Open image
+        # load image
         image    = Image.open(img_path).convert("RGB")
         img_w, img_h = image.size
 
-        # Slice with SAHI
+        # slice with SAHI
         slice_result = slice_image(
             image            = str(img_path),
             slice_height     = SLICE_SIZE,
@@ -139,7 +133,8 @@ def process_dataset():
             tw, th   = tile_pil.size
 
             tile_labels = []
-            for (cls, cx, cy, bw, bh) in annotations:
+            for (cls, cx, cy, bw, bh) in annotations: 
+                # for each original bbox, convert to absolute coords, clip to tile, convert back to yolo relative coords
                 x1, y1, x2, y2 = yolo_to_abs(cx, cy, bw, bh, img_w, img_h)
                 clipped = clip_bbox_to_tile(x1, y1, x2, y2, sx, sy, tw, th)
                 if clipped is None:
@@ -157,14 +152,15 @@ def process_dataset():
             # if it is background without label I am not saving it since its already way too fucking big
             if not tile_labels:
                 continue
-
+            
+            # save tile image and labels
             stem     = f"{img_path.stem}_tile{idx:04d}"
             out_img  = out_images_path / (stem + ".jpg")
             out_lbl  = out_labels_path / (stem + ".txt")
 
             tile_pil.save(out_img, quality=95)
 
-            with open(out_lbl, "w") as f:
+            with open(out_lbl, "w") as f: # write tile labels in YOLO format
                 for (cls, ncx, ncy, nw, nh) in tile_labels:
                     f.write(f"{cls} {ncx:.6f} {ncy:.6f} {nw:.6f} {nh:.6f}\n")
 
