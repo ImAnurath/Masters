@@ -7,8 +7,8 @@ from sahi.slicing import slice_image
 # ─────────────────────────────────────────────
 #  CONFIGURATION
 # ─────────────────────────────────────────────
-DATA_DIR        = "Masters/data"          # folder with images/ and labels/ subdirs
-OUTPUT_DIR      = "Masters/data_sliced"   # will be created automatically
+DATA_DIR        = "Masters/Data/DET_data_OG"          # folder with images/ and labels/ subdirs
+OUTPUT_DIR      = "Masters/Data/data_sliced"   # will be created automatically
 SLICE_SIZE      = 640               # slice width and height in pixels
 OVERLAP_RATIO   = 0.3               # % overlap between slices
 MIN_VISIBILITY  = 0.1               # keep a bbox in a slice if at least this

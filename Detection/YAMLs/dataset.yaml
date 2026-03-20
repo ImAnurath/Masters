@@ -1,4 +1,4 @@
-path: data_sliced_split
+path: D:/Projects/Masters/Data/DET_data_sliced_split
 train: train/images
 val: val/images
 test: test/images

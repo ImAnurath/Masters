@@ -1,7 +1,6 @@
-data/
-data_sliced/
 Detection/BaseModels/
 Detection/runs/
-Detection/data_sliced_split/
-ActionRecognition/dataset
-*.pt
+Detection/*.pt
+ActionRecognition/*.pt
+Data
+test.py

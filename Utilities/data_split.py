@@ -14,12 +14,13 @@ assert abs(train_ratio + val_ratio + test_ratio - 1.0) < 1e-6
 root = os.path.dirname(__file__)
 
 # Original data folder
-data_dir = Path(root) / "data_sliced"
+root = Path(root)
+data_dir = root.parent / "Data" / "DET_data_sliced"
 images_dir = data_dir / "images"
 labels_dir = data_dir / "labels"
 
 # new split output folder
-split_dir = Path(root) / "data_sliced_split"
+split_dir = Path(root) / "DET_data_sliced_split"
 splits = ["train", "val", "test"]
 
 # create split directories
