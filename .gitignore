@@ -5,3 +5,6 @@ ActionRecognition/*.pt
 Data
 test.py
 Claude test
+Thesis
+CLAUDE.md
+.pkl
