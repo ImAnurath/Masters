@@ -9,3 +9,9 @@ Thesis
 CLAUDE.md
 *.pkl
 Tests
+cache
+Archive
+*.mp4
+*.avi
+ActionRecognition/20260509_055348/best_model.pt
+ActionRecognition/results/20260509_055348/graph_results_20260509_082728.csv

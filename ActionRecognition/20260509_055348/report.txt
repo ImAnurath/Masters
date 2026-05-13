@@ -1,0 +1,13 @@
+Run: 20260509_055348
+Epoch: 27
+Val F1: 0.9638
+
+              precision    recall  f1-score   support
+
+     fanning       1.00      0.95      0.97      1074
+     neutral       0.95      1.00      0.97       376
+trophallaxis       0.91      0.99      0.95       379
+
+    accuracy                           0.97      1829
+   macro avg       0.95      0.98      0.96      1829
+weighted avg       0.97      0.97      0.97      1829

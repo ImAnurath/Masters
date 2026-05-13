@@ -19,7 +19,7 @@ import numpy as np
 from PIL import Image
 
 SCRIPT_DIR  = Path(__file__).parent
-DATA_ROOT   = Path("D:/Projects/Masters/Data/AR_merged_dataset/train")
+DATA_ROOT   = Path("D:/Projects/Masters/Data/AR_v2_dataset/train")
 CLASSES     = ["fanning", "neutral", "trophallaxis"]
 LABELS      = ["Fanning", "Neutral", "Trophallaxis"]
 COLORS      = ["#AED6F1", "#A9DFBF", "#F9E79F"]   # blue / green / yellow
@@ -41,10 +41,34 @@ def laplacian_var(img: Image.Image) -> float:
     return float(lap.var())
 
 
+def has_reflect_padding(img: Image.Image, strip: int = 8,
+                        threshold: float = 0.97) -> bool:
+    """
+    Detect reflect-padded crops by checking whether any edge strip is a
+    near-perfect mirror of the immediately adjacent strip.
+    """
+    arr = np.array(img.convert("L"), dtype=float)
+
+    def corr(a: np.ndarray, b: np.ndarray) -> float:
+        a, b = a.flatten(), b.flatten()
+        if a.std() < 1e-3 or b.std() < 1e-3:
+            return 1.0
+        return float(np.corrcoef(a, b)[0, 1])
+
+    checks = [
+        corr(arr[:, :strip],   arr[:, strip:strip * 2][:, ::-1]),    # left
+        corr(arr[:, -strip:],  arr[:, -strip * 2:-strip][:, ::-1]),  # right
+        corr(arr[:strip, :],   arr[strip:strip * 2, :][::-1, :]),    # top
+        corr(arr[-strip:, :],  arr[-strip * 2:-strip, :][::-1, :]),  # bottom
+    ]
+    return any(c > threshold for c in checks)
+
+
 def score_paths(paths: list[str], max_n: int = SAMPLE_N,
                 strategy: str = "sharp") -> list[tuple[float, str]]:
     """
     Sample up to max_n images, score by sharpness + brightness filter.
+    Reflect-padded crops (border artefacts from data_prep.py) are excluded.
 
     strategy="sharp"    → return highest-sharpness images first (neutral, trophallaxis)
     strategy="moderate" → return images in the mid sharpness range first (fanning —
@@ -58,6 +82,8 @@ def score_paths(paths: list[str], max_n: int = SAMPLE_N,
             img = Image.open(p)
             brightness = float(np.array(img.convert("L")).mean())
             if brightness < 35 or brightness > 220:
+                continue
+            if has_reflect_padding(img):
                 continue
             scored.append((laplacian_var(img), p))
         except Exception:

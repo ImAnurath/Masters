@@ -14,15 +14,16 @@ import numpy as np
 
 OUT = Path(__file__).parent / "fig_4_4_sequence_counts.png"
 
-# ── data (from Table 4.2.4 and Section 3.5.3) ────────────────────────────────
+# ── data (AR_v2_dataset — from train.ipynb "Building sequences..." output) ───
 classes = ["Fanning", "Trophallaxis", "Neutral"]
-train   = [65,        21,             4_202]
-val     = [12,        11,               858]
+train   = [442,       76,             1_893]
+val     = [153,       34,               371]
 
-# class weights: w_c = N_total / (C * N_c)
-N_total  = sum(train)   # 4,288
-C        = 3
-weights  = [N_total / (C * n) for n in train]  # [21.99, 68.06, 0.34]
+# Approximate class weights from the trained model.
+# Weights are computed from training *window* counts after proportional
+# multi-window expansion (not raw sequence counts), so they are hardcoded
+# here to match the values stated in the thesis text (Section 3.5.2).
+weights = [0.93, 2.40, 0.66]  # w_fan, w_tro, w_neu
 
 # ── layout ────────────────────────────────────────────────────────────────────
 x      = np.arange(len(classes))
@@ -43,7 +44,7 @@ bars_val   = ax.bar(x + width / 2 + gap / 2, val,   width,
 
 # ── log scale ─────────────────────────────────────────────────────────────────
 ax.set_yscale("log")
-ax.set_ylim(8, 12_000)
+ax.set_ylim(8, 5_000)
 ax.yaxis.set_major_formatter(ticker.FuncFormatter(
     lambda v, _: f"{int(v):,}" if v >= 1 else ""
 ))
@@ -73,9 +74,9 @@ ax2.plot(x, weights, color=WEIGHT_C, linewidth=1.8,
 
 # weight labels with leader lines — (text_x, text_y, ha, va)
 label_specs = [
-    (0.0,  36,  "center", "bottom"),   # Fanning     — above diamond
-    (1.0,  50,  "center", "top"),      # Trophallaxis — below diamond
-    (2.0,  12,  "center", "bottom"),   # Neutral      — above diamond
+    (0.0,  1.20, "center", "bottom"),  # Fanning     — above diamond
+    (1.0,  2.70, "center", "bottom"),  # Trophallaxis — above diamond
+    (2.0,  0.85, "center", "bottom"),  # Neutral      — above diamond
 ]
 for (xi, w), (tx, ty, ha, va) in zip(zip(x, weights), label_specs):
     ax2.annotate(
@@ -89,7 +90,7 @@ for (xi, w), (tx, ty, ha, va) in zip(zip(x, weights), label_specs):
 
 ax2.set_ylabel("Class weight  (loss weighting)", fontsize=10, color=WEIGHT_C)
 ax2.tick_params(axis="y", labelcolor=WEIGHT_C)
-ax2.set_ylim(0, 82)
+ax2.set_ylim(0, 3.5)
 ax2.spines["right"].set_color(WEIGHT_C)
 ax2.spines["right"].set_linewidth(1.2)
 
@@ -114,8 +115,8 @@ ax.grid(axis="y", which="minor", linestyle=":", alpha=0.2)
 # ── imbalance annotation ──────────────────────────────────────────────────────
 ratio = train[2] / (train[0] + train[1])
 ax.text(
-    x[2], 6_200,
-    f"Neutral is ×{ratio:.0f} more frequent than\n fanning + trophallaxis combined",
+    x[2], 3_400,
+    f"Neutral is ×{ratio:.1f} more frequent than\n fanning + trophallaxis combined",
     ha="center", va="bottom",
     fontsize=6.5, fontweight="bold", color="#1B2631",
 )
