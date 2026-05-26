@@ -1,0 +1,33 @@
+# Core ML / vision
+# Install a CUDA-matched PyTorch build first from https://pytorch.org/get-started/locally/
+# (the lines below install the CPU build by default).
+torch
+torchvision
+
+# Detection: YOLOv11 + slicing inference
+ultralytics
+sahi
+supervision
+
+# Action recognition: DINOv2 feature extractor
+transformers
+
+# Scientific stack
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+
+# Image / video I/O
+opencv-python
+Pillow
+
+# Config + utilities
+PyYAML
+tqdm
+
+# Notebook execution
+ipython
+ipykernel
+jupyter
