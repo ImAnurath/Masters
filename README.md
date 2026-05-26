@@ -16,7 +16,7 @@ Master's thesis, [Vilnius Gediminas Technical University (VILNIUS TECH / VGTU)](
 | Detection | YOLOv11-medium + SAHI tiling | **mAP@0.5:0.95** | **0.853** |
 | Detection | YOLOv11-medium + SAHI tiling | Precision / Recall | 0.983 / 0.973 |
 | Action recognition | Temporal Transformer (3 layers, 6 heads) on frozen DINOv2-small features, 16-frame buffer | **Accuracy** | **0.97** |
-| Action recognition | — | **Macro F1** | **0.96** |
+| Action recognition | Temporal Transformer (3 layers, 6 heads) on frozen DINOv2-small features, 16-frame buffer  | **Macro F1** | **0.96** |
 
 **Per-class F1** (validation, 44,680 samples): fanning **0.97** · neutral **0.97** · trophallaxis **0.95**.
 
