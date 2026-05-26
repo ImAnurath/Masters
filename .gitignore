@@ -1,13 +1,9 @@
-Detection/BaseModels/
 Detection/runs/
 Detection/*.pt
 ActionRecognition/*.pt
 Data
-test.py
-Claude test
 CLAUDE.md
 *.pkl
-Tests
 cache
 Archive
 *.mp4
